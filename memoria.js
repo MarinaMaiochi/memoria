@@ -10,6 +10,18 @@ const data = [
     { capa: 'q1.jpg', ator: 'q2.jpg', id:'9'}, { capa: 'r1.jpg', ator: 'r2.jpg', id:'19'},
     { capa: 's1.jpg', ator: 's2.jpg', id:'10'}, { capa: 't1.jpg', ator: 't2.jpg', id:'20'},
 ]
+
+
+document.querySelector('.info').addEventListener('click', Info);
+function Info(event){
+    const infoBut = document.querySelector(".mostraInfos");
+    if(infoBut.classList.contains('some')){
+        infoBut.classList.remove('some');
+    } else {
+        infoBut.classList.add('some');
+    }
+}
+
 function setUp() {
     let escolhidos = [...data];
     for (let i = 0; i < 10; i++) {
@@ -37,7 +49,6 @@ function montaTabuleiro(escolhidos){
     shuffle(cartas);
     
     let x=0;
-
     for (let i = 0; i < 5; i++) {
         
         let divLinha = document.createElement('div');
@@ -45,13 +56,25 @@ function montaTabuleiro(escolhidos){
 
         for (let j = 0; j < 4; j++) {
 
-            divLinha.appendChild(cartas[x]);
+            let box = document.createElement('div');
+            box.classList.add('flip-box');
+            let boxInner = document.createElement('div');
+            boxInner.classList.add('flip-box-inner');
+            let boxFront = document.createElement('div');
+            boxFront.classList.add('flip-box-front');
+            let boxBack = document.createElement('div');
+            boxBack.classList.add('flip-box-back');
+
+            boxInner.appendChild(boxFront);
+            boxBack.appendChild(cartas[x]);
+            boxInner.appendChild(boxBack);
+            box.appendChild(boxInner);
+            divLinha.appendChild(box);
             x++;
         } 
         
         document.querySelector('.tabuleiro').appendChild(divLinha);
     }
-
 }
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -71,5 +94,63 @@ function shuffle(array) {
   
     return array;
 }
+document.querySelector('.play').addEventListener('click', mostraCartas);
+
+function mostraCartas(){
+    document.querySelector('.play').removeEventListener('click', mostraCartas);
+    const clicaveis = document.querySelectorAll('.flip-box');
+    for (let i = 0; i < clicaveis.length; i++) {
+        clicaveis[i].classList.add('virado');
+    }
+    setTimeout(escondeCartas, 3000);
+}
+function escondeCartas(){
+    const clicaveis = document.querySelectorAll('.virado');
+    for (let i = 0; i < clicaveis.length; i++) {
+        clicaveis[i].classList.remove('virado');
+    }
+}
+
+
+// __________________________________________________  TIMER  ___________
+
+// function zeraTimer(){
+//     pauseTimer();
+//     segundos = 0;
+//     atualizaTimer();
+// }
+
+// const playBut = document.querySelector('.play');
+// const pauseBut = document.querySelector('.pause');
+
+// function atualizaTimer(){
+//     const minutos = (Math.floor(segundos/60)+ '').padStart(2,0);
+//     const restoSegundos = ((segundos%60) + '').padStart(2,0);
+//     document.querySelector('.timer > p').innerText = minutos + ':' + restoSegundos;
+// }
+
+// function addSegundos(){
+//     segundos++;
+//     atualizaTimer();
+// }
+
+// function playTimer() {
+//     if (contando == false){
+//         refContagem = setInterval(addSegundos,1000);
+//         contando = true;
+//         document.querySelector('.pause').removeAttribute("disabled");
+//         document.querySelector('.play').setAttribute("disabled", true);
+
+//     }
+// }
+// playBut.addEventListener('click', playTimer);
+
+// function pauseTimer() {
+//     contando = false;
+//     clearInterval(refContagem);
+//     document.querySelector('.play').removeAttribute("disabled");
+//     document.querySelector('.pause').setAttribute("disabled", true);
+// }
+// pauseBut.addEventListener('click', pauseTimer);
 
 setUp();
