@@ -10,7 +10,8 @@ const data = [
     { capa: 'q1.jpg', ator: 'q2.jpg', id:'9'}, { capa: 'r1.jpg', ator: 'r2.jpg', id:'19'},
     { capa: 's1.jpg', ator: 's2.jpg', id:'10'}, { capa: 't1.jpg', ator: 't2.jpg', id:'20'},
 ]
-
+let segundos = 0;
+let clickHabilitado = false;
 
 document.querySelector('.info').addEventListener('click', Info);
 function Info(event){
@@ -21,8 +22,8 @@ function Info(event){
         infoBut.classList.add('some');
     }
 }
-
 function setUp() {
+    document.querySelector('.play').addEventListener('click', mostraCartas);
     let escolhidos = [...data];
     for (let i = 0; i < 10; i++) {
         
@@ -31,18 +32,32 @@ function setUp() {
     }
     montaTabuleiro(escolhidos);
 }
+function criaCarta(caminhoImagem, dataId) {
+    let carta1 = document.createElement('img');
+    carta1.src=caminhoImagem;
+    carta1.classList.add('carta');
+
+    let box = document.createElement('div');
+    box.classList.add('flip-box');
+    box.setAttribute('data-id', dataId)
+    let boxInner = document.createElement('div');
+    boxInner.classList.add('flip-box-inner');
+    let boxFront = document.createElement('div');
+    boxFront.classList.add('flip-box-front');
+    let boxBack = document.createElement('div');
+    boxBack.classList.add('flip-box-back');
+
+    boxInner.appendChild(boxFront);
+    boxBack.appendChild(carta1);
+    boxInner.appendChild(boxBack);
+    box.appendChild(boxInner);
+    return box;
+}
 function montaTabuleiro(escolhidos){
     const cartas = [];
     for (let i = 0; i < escolhidos.length; i++) {
-
-        let carta1 = document.createElement('img');
-        carta1.src=escolhidos[i].capa;
-        carta1.classList.add('carta');
-        carta1.setAttribute('data-id', escolhidos[i].id)
-        let carta2 = document.createElement('img');
-        carta2.src=escolhidos[i].ator;
-        carta2.classList.add('carta');
-        carta2.setAttribute('data-id', escolhidos[i].id)
+        let carta1 = criaCarta(escolhidos[i].capa, escolhidos[i].id) ;
+        let carta2 = criaCarta(escolhidos[i].ator, escolhidos[i].id) ;
 
         cartas.push(carta1,carta2);
     }
@@ -50,29 +65,13 @@ function montaTabuleiro(escolhidos){
     
     let x=0;
     for (let i = 0; i < 5; i++) {
-        
         let divLinha = document.createElement('div');
         divLinha.classList.add('linha');
 
         for (let j = 0; j < 4; j++) {
-
-            let box = document.createElement('div');
-            box.classList.add('flip-box');
-            let boxInner = document.createElement('div');
-            boxInner.classList.add('flip-box-inner');
-            let boxFront = document.createElement('div');
-            boxFront.classList.add('flip-box-front');
-            let boxBack = document.createElement('div');
-            boxBack.classList.add('flip-box-back');
-
-            boxInner.appendChild(boxFront);
-            boxBack.appendChild(cartas[x]);
-            boxInner.appendChild(boxBack);
-            box.appendChild(boxInner);
-            divLinha.appendChild(box);
+            divLinha.appendChild(cartas[x]);
             x++;
         } 
-        
         document.querySelector('.tabuleiro').appendChild(divLinha);
     }
 }
@@ -109,48 +108,80 @@ function escondeCartas(){
     for (let i = 0; i < clicaveis.length; i++) {
         clicaveis[i].classList.remove('virado');
     }
+    habilitaCartas();
+}
+function habilitaCartas(){
+    const cartas = document.querySelectorAll('.flip-box');
+    for (let i = 0; i < cartas.length; i++) {
+        cartas[i].addEventListener('click',viraCarta);
+    }
+    clickHabilitado = true ;
 }
 
+function viraCarta(event){
+
+    if(!clickHabilitado){
+        return
+    }
+ 
+    const clicado = event.currentTarget; 
+    clicado.classList.add('virado');
+    
+    const cartasViradas = document.querySelectorAll('.virado:not(.certo)');
+    if (cartasViradas.length == 1){
+        return
+    } else if (cartasViradas.length == 2){
+        clickHabilitado = false;
+        setTimeout(function() {
+            checaPar(cartasViradas)
+        }, 1000);
+    }
+}
+
+function checaPar(cartas){
+    const idCarta1 = cartas[0].getAttribute('data-id');
+    const idCarta2 = cartas[1].getAttribute('data-id');
+    if(idCarta1 == idCarta2 ){
+        cartas[0].classList.add('certo');
+        cartas[1].classList.add('certo');
+    } else {
+        cartas[0].classList.remove('virado');
+        cartas[1].classList.remove('virado');
+    }
+    clickHabilitado = true ;
+    if ( document.querySelectorAll('.certo')>1 && document.querySelectorAll('.certo:not(.virado)').length == 0){
+        clearInterval(refContagem);
+    }
+}
 
 // __________________________________________________  TIMER  ___________
 
-// function zeraTimer(){
-//     pauseTimer();
-//     segundos = 0;
-//     atualizaTimer();
-// }
-
-// const playBut = document.querySelector('.play');
-// const pauseBut = document.querySelector('.pause');
-
-// function atualizaTimer(){
-//     const minutos = (Math.floor(segundos/60)+ '').padStart(2,0);
-//     const restoSegundos = ((segundos%60) + '').padStart(2,0);
-//     document.querySelector('.timer > p').innerText = minutos + ':' + restoSegundos;
-// }
-
-// function addSegundos(){
-//     segundos++;
-//     atualizaTimer();
-// }
-
-// function playTimer() {
-//     if (contando == false){
-//         refContagem = setInterval(addSegundos,1000);
-//         contando = true;
-//         document.querySelector('.pause').removeAttribute("disabled");
-//         document.querySelector('.play').setAttribute("disabled", true);
-
-//     }
-// }
-// playBut.addEventListener('click', playTimer);
-
-// function pauseTimer() {
-//     contando = false;
-//     clearInterval(refContagem);
-//     document.querySelector('.play').removeAttribute("disabled");
-//     document.querySelector('.pause').setAttribute("disabled", true);
-// }
-// pauseBut.addEventListener('click', pauseTimer);
-
+function zeraTimer(){
+    segundos = 0;
+    atualizaTimer();
+}
+const playBut = document.querySelector('.play');
+function atualizaTimer(){
+    const minutos = (Math.floor(segundos/60)+ '').padStart(2,0);
+    const restoSegundos = ((segundos%60) + '').padStart(2,0);
+    document.querySelector('.timer > p').innerText = minutos + ':' + restoSegundos;
+}
+function addSegundos(){
+    segundos++;
+    atualizaTimer();
+}
+function playTimer() {
+   refContagem = setInterval(addSegundos,1000);
+   document.querySelector('.play').setAttribute("disabled", true);
+}
+function novoJogo() {
+    clearInterval(refContagem);
+    zeraTimer();
+    document.querySelector('.play').removeAttribute("disabled");
+    document.querySelector('.tabuleiro').innerHTML = '';
+    setUp();
+}
+playBut.addEventListener('click', playTimer);
+const novoBut = document.querySelector('.novo');
+novoBut.addEventListener('click', novoJogo);
 setUp();

@@ -81,7 +81,9 @@ h1{
 .some{
     visibility: hidden;
 }
-
+.certo{
+    opacity: 0.75;
+}
 .linha{
     width: 320px;
     display: flex;
@@ -120,3 +122,4 @@ h1{
 .flip-box-back {
     transform: rotateY(180deg);
 }
+
