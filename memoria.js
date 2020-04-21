@@ -11,6 +11,7 @@ const data = [
     { capa: 's1.jpg', ator: 's2.jpg', id:'10'}, { capa: 't1.jpg', ator: 't2.jpg', id:'20'},
 ]
 let segundos = 0;
+let refContagem;
 let clickHabilitado = false;
 
 document.querySelector('.info').addEventListener('click', Info);
@@ -119,14 +120,11 @@ function habilitaCartas(){
 }
 
 function viraCarta(event){
-
     if(!clickHabilitado){
         return
     }
- 
     const clicado = event.currentTarget; 
     clicado.classList.add('virado');
-    
     const cartasViradas = document.querySelectorAll('.virado:not(.certo)');
     if (cartasViradas.length == 1){
         return
@@ -137,7 +135,6 @@ function viraCarta(event){
         }, 1000);
     }
 }
-
 function checaPar(cartas){
     const idCarta1 = cartas[0].getAttribute('data-id');
     const idCarta2 = cartas[1].getAttribute('data-id');
@@ -149,7 +146,7 @@ function checaPar(cartas){
         cartas[1].classList.remove('virado');
     }
     clickHabilitado = true ;
-    if ( document.querySelectorAll('.certo')>1 && document.querySelectorAll('.certo:not(.virado)').length == 0){
+    if ( document.querySelectorAll('.certo').length>1 && document.querySelectorAll('.certo:not(.virado)').length == 0){
         clearInterval(refContagem);
     }
 }
