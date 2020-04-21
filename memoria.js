@@ -146,7 +146,7 @@ function checaPar(cartas){
         cartas[1].classList.remove('virado');
     }
     clickHabilitado = true ;
-    if ( document.querySelectorAll('.certo').length>1 && document.querySelectorAll('.certo:not(.virado)').length == 0){
+    if ( document.querySelectorAll('.certo').length == document.querySelectorAll('.carta').length  ){
         clearInterval(refContagem);
     }
 }
